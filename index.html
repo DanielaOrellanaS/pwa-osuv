@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1a3a6b" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="OSUV Asistencia" />
+  <link rel="manifest" href="manifest.json" />
+  <title>OSUV · Asistencia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0f2548;
+      --blue: #1a3a6b;
+      --blue-mid: #1f4fa0;
+      --green: #6db33f;
+      --green-light: #89cc56;
+      --gold: #c9a84c;
+      --white: #f8f9fc;
+      --surface: #ffffff;
+      --surface2: #eef1f7;
+      --text: #0f2548;
+      --text-muted: #6b7a9b;
+      --border: #dde3f0;
+      --shadow: 0 4px 24px rgba(15,37,72,0.10);
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--white);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--blue-mid) 100%);
+      padding: 20px 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 20px rgba(15,37,72,0.3);
+    }
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-bottom: 16px;
+    }
+    .logo-circle {
+      width: 48px; height: 48px;
+      background: white;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 3px rgba(109,179,63,0.4);
+      overflow: hidden;
+    }
+    .logo-circle img { width: 42px; height: 42px; object-fit: contain; }
+    .logo-svg {
+      width: 36px; height: 36px;
+    }
+    .header-title { flex: 1; }
+    .header-title h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      color: white;
+      line-height: 1.2;
+      letter-spacing: 0.3px;
+    }
+    .header-title span {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: var(--green-light);
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .btn-icon {
+      width: 40px; height: 40px;
+      border: none;
+      background: rgba(255,255,255,0.12);
+      border-radius: 10px;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .btn-icon:active { background: rgba(255,255,255,0.22); }
+
+    /* ── NAV TABS ── */
+    .nav-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 0 4px;
+    }
+    .nav-tab {
+      flex: 1;
+      padding: 10px 4px;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.55);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .nav-tab.active {
+      color: var(--green-light);
+      border-bottom-color: var(--green-light);
+    }
+
+    /* ── MAIN ── */
+    main { padding: 20px 16px 100px; }
+
+    /* ── SCREEN ── */
+    .screen { display: none; animation: fadeIn 0.25s ease; }
+    .screen.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+    }
+    .card-header {
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .section-count {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--blue-mid);
+      background: var(--surface2);
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    /* ── DATE SELECTOR ── */
+    .date-bar {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+    .date-bar-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .date-bar-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .date-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--surface2);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .date-input:focus { border-color: var(--blue-mid); }
+    .btn-primary {
+      padding: 10px 18px;
+      background: linear-gradient(135deg, var(--blue-mid), var(--navy));
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    .btn-primary:active { opacity: 0.85; }
+    .btn-green {
+      background: linear-gradient(135deg, var(--green), #4a8a2a);
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, #e53e3e, #c53030);
+    }
+
+    /* ── MEMBER LIST ── */
+    .member-item {
+      display: flex;
+      align-items: center;
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+      transition: background 0.15s;
+    }
+    .member-item:last-child { border-bottom: none; }
+    .member-item:active { background: var(--surface2); }
+    .member-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue-mid), var(--navy));
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      flex-shrink: 0;
+      letter-spacing: 0.5px;
+    }
+    .member-info { flex: 1; min-width: 0; }
+    .member-name {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .member-instrument {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+    .attendance-toggle {
+      display: flex;
+      gap: 6px;
+    }
+    .att-btn {
+      width: 34px; height: 34px;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface2);
+      cursor: pointer;
+      font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .att-btn.present { background: var(--green); border-color: var(--green); }
+    .att-btn.absent  { background: #e53e3e; border-color: #e53e3e; }
+    .att-btn.late    { background: #d97706; border-color: #d97706; }
+    .att-btn.justified { background: #6366f1; border-color: #6366f1; }
+    .att-btn.notcalled  { background: #6b7280; border-color: #6b7280; }
+
+    /* ── QUICK ACTIONS ── */
+    .quick-actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .qa-btn {
+      flex: 1;
+      padding: 12px 8px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+    .qa-btn:active { transform: scale(0.96); }
+    .qa-icon { font-size: 20px; }
+    .qa-btn.all-present { border-color: var(--green); color: var(--green); }
+    .qa-btn.all-absent { border-color: #e53e3e; color: #e53e3e; }
+    .qa-btn.clear-all { border-color: var(--gold); color: var(--gold); }
+
+    /* ── STATS ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .stat-present .stat-number { color: var(--green); }
+    .stat-absent  .stat-number { color: #e53e3e; }
+    .stat-late    .stat-number { color: #d97706; }
+    .stat-pct     .stat-number { color: var(--blue-mid); }
+
+    /* ── LEGEND ── */
+    .legend {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 3px;
+    }
+
+    /* ── HISTORY ── */
+    .history-item {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .history-item:last-child { border-bottom: none; }
+    .history-date {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: var(--navy);
+    }
+    .history-stats {
+      display: flex;
+      gap: 12px;
+      font-size: 13px;
+    }
+    .hs { display: flex; align-items: center; gap: 4px; }
+    .hs-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+    /* ── EXPORT ── */
+    .export-section { margin-bottom: 16px; }
+    .export-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--navy), var(--blue-mid));
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: opacity 0.2s;
+      box-shadow: var(--shadow);
+    }
+    .export-btn:active { opacity: 0.85; }
+    .export-btn.green-btn {
+      background: linear-gradient(135deg, var(--green), #4a8a2a);
+      margin-top: 10px;
+    }
+
+    /* ── MEMBERS ADMIN ── */
+    .member-admin-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      gap: 10px;
+    }
+    .member-admin-item:last-child { border-bottom: none; }
+    .btn-sm {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-sm:active { opacity: 0.75; }
+    .btn-danger-sm { background: #fee2e2; color: #e53e3e; }
+    .add-form {
+      padding: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .form-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .form-input {
+      flex: 1;
+      min-width: 130px;
+      padding: 10px 12px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--surface2);
+      outline: none;
+    }
+    .form-input:focus { border-color: var(--blue-mid); }
+    select.form-input { cursor: pointer; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--navy);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 999;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      white-space: nowrap;
+      box-shadow: 0 8px 30px rgba(15,37,72,0.3);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      box-shadow: 0 -4px 20px rgba(15,37,72,0.08);
+      z-index: 100;
+    }
+    .bnav-btn {
+      flex: 1;
+      padding: 10px 0 14px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: color 0.2s;
+    }
+    .bnav-btn.active { color: var(--blue-mid); }
+    .bnav-icon { font-size: 22px; }
+
+    /* ── PROGRESS BAR ── */
+    .progress-bar-wrap {
+      background: var(--surface2);
+      border-radius: 100px;
+      height: 6px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--green-light));
+      border-radius: 100px;
+      transition: width 0.5s ease;
+    }
+
+    /* ── MONTH SELECTOR ── */
+    .month-selector {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-bottom: 16px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .month-selector::-webkit-scrollbar { display: none; }
+    .month-btn {
+      flex-shrink: 0;
+      padding: 8px 16px;
+      border: 2px solid var(--border);
+      border-radius: 100px;
+      background: var(--surface);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.15s;
+    }
+    .month-btn.active {
+      background: var(--blue-mid);
+      border-color: var(--blue-mid);
+      color: white;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+    .empty-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-text { font-size: 14px; line-height: 1.6; }
+
+    /* ── MODAL ── */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,37,72,0.5);
+      z-index: 200;
+      backdrop-filter: blur(4px);
+    }
+    .modal-backdrop.show { display: flex; align-items: flex-end; }
+    .modal {
+      background: var(--surface);
+      border-radius: 24px 24px 0 0;
+      width: 100%;
+      padding: 20px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .modal-handle {
+      width: 40px; height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+    .modal h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    .filter-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--surface2);
+      outline: none;
+      margin-bottom: 12px;
+    }
+    .filter-input:focus { border-color: var(--blue-mid); }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .chip-present { background: #d1fae5; color: #065f46; }
+    .chip-absent  { background: #fee2e2; color: #991b1b; }
+    .chip-late    { background: #fef3c7; color: #92400e; }
+    .chip-justified { background: #ede9fe; color: #4c1d95; }
+    .chip-none    { background: var(--surface2); color: var(--text-muted); }
+    .chip-notcalled { background: #f3f4f6; color: #374151; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="logo-circle">
+      <!-- SVG inline logo (OSUV colors) -->
+      <svg class="logo-svg" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="30" cy="30" r="28" fill="white"/>
+        <path d="M30 6 A24 24 0 0 1 54 30" stroke="#6db33f" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M54 30 A24 24 0 0 1 6 30" stroke="#1a3a6b" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <path d="M6 30 A24 24 0 0 1 30 6" stroke="#1a3a6b" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <line x1="22" y1="38" x2="44" y2="16" stroke="#1a3a6b" stroke-width="3" stroke-linecap="round"/>
+        <ellipse cx="20" cy="40" rx="7" ry="5" fill="#1a3a6b" transform="rotate(-20 20 40)"/>
+      </svg>
+    </div>
+    <div class="header-title">
+      <span>Orquesta Sinfónica</span>
+      <h1>Universidad UTE Victoria</h1>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- ── SCREEN: ASISTENCIA ── -->
+  <div id="screen-asistencia" class="screen active">
+
+    <div class="date-bar">
+      <div class="date-bar-label">Ensayo</div>
+      <div class="date-bar-row">
+        <input type="date" class="date-input" id="ensayo-date" />
+        <button class="btn-primary" onclick="loadAttendanceView()">Cargar</button>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Presente</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e53e3e"></div>Ausente</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#d97706"></div>Tardanza</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#6366f1"></div>Justificado</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#6b7280"></div>No convocado</div>
+    </div>
+
+    <div class="quick-actions">
+      <button class="qa-btn all-present" onclick="setAllPresent()">
+        <span class="qa-icon">✅</span>Todos presentes
+      </button>
+      <button class="qa-btn all-absent" onclick="setAllAbsent()">
+        <span class="qa-icon">❌</span>Todos ausentes
+      </button>
+      <button class="qa-btn clear-all" onclick="clearAll()">
+        <span class="qa-icon">🔄</span>Limpiar
+      </button>
+    </div>
+
+    <div id="attendance-list"></div>
+
+    <button class="export-btn" onclick="saveAttendance()">
+      💾 Guardar Asistencia
+    </button>
+
+  </div>
+
+  <!-- ── SCREEN: HISTORIAL ── -->
+  <div id="screen-historial" class="screen">
+    <div class="month-selector" id="month-selector"></div>
+    <div id="historial-list"></div>
+  </div>
+
+  <!-- ── SCREEN: ESTADÍSTICAS ── -->
+  <div id="screen-stats" class="screen">
+    <div class="stats-grid" id="stats-grid"></div>
+    <div id="stats-detail"></div>
+  </div>
+
+  <!-- ── SCREEN: MÚSICOS ── -->
+  <div id="screen-musicos" class="screen">
+    <input type="text" class="filter-input" id="search-musicos" placeholder="🔍 Buscar músico..." oninput="renderMusicosAdmin()" />
+    <div id="musicos-list"></div>
+    <div class="card">
+      <div class="card-header">
+        <span class="section-label">Agregar Músico</span>
+      </div>
+      <div class="add-form">
+        <div class="form-row">
+          <input type="text" class="form-input" id="new-name" placeholder="Nombre completo" />
+        </div>
+        <div class="form-row">
+          <select class="form-input" id="new-instrument">
+            <option value="">Sección...</option>
+            <option>VIOLINES 1</option>
+            <option>VIOLINES 2</option>
+            <option>VIOLAS</option>
+            <option>CHELOS</option>
+            <option>CONTRAS</option>
+            <option>FLAUTAS</option>
+            <option>OBOE</option>
+            <option>CLARINETE</option>
+            <option>FAGOT</option>
+            <option>TROMPETA</option>
+            <option>CORNO</option>
+            <option>TROMBÓN</option>
+            <option>PERCUSIÓN</option>
+            <option>PIANO</option>
+            <option>ARPA</option>
+          </select>
+          <button class="btn-primary btn-green" onclick="addMusico()">+ Agregar</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:8px">
+
+      <!-- GOOGLE SHEETS SYNC -->
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-header">
+          <span class="section-label">🔗 Google Sheets</span>
+          <span id="sheets-status-badge" class="section-count" style="background:#f0fdf4;color:#16a34a">No configurado</span>
+        </div>
+        <div style="padding:14px 16px">
+          <div style="font-size:13px;color:var(--text-muted);margin-bottom:10px;line-height:1.5">
+            Sincroniza automáticamente con un Google Sheet compartido para que todos puedan ver las asistencias.
+          </div>
+          <input type="url" class="form-input" id="sheets-url"
+            placeholder="Pega aquí la URL del Apps Script..."
+            oninput="saveSheetUrl()"
+            style="width:100%;margin-bottom:10px;font-size:13px" />
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn-primary btn-green" onclick="syncSheets()" style="flex:1;min-width:130px">
+              🔄 Sincronizar ahora
+            </button>
+            <button class="btn-primary" onclick="showSheetHelp()" style="flex:1;min-width:130px;background:linear-gradient(135deg,#6366f1,#4338ca)">
+              ❓ Cómo configurar
+            </button>
+          </div>
+          <div id="sync-log" style="margin-top:10px;font-size:12px;color:var(--text-muted);display:none"></div>
+        </div>
+      </div>
+
+      <button class="export-btn" onclick="exportCSV()">
+        📄 Exportar CSV (Excel)
+      </button>
+      <button class="export-btn green-btn" onclick="exportJSON()">
+        📤 Backup JSON
+      </button>
+      <button class="export-btn" style="margin-top:10px;background:linear-gradient(135deg,#6366f1,#4338ca)" onclick="importJSON()">
+        📥 Importar Backup
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="bnav-btn active" onclick="switchScreen('asistencia',this)">
+    <span class="bnav-icon">📋</span>Asistencia
+  </button>
+  <button class="bnav-btn" onclick="switchScreen('historial',this)">
+    <span class="bnav-icon">📅</span>Historial
+  </button>
+  <button class="bnav-btn" onclick="switchScreen('stats',this)">
+    <span class="bnav-icon">📊</span>Estadísticas
+  </button>
+  <button class="bnav-btn" onclick="switchScreen('musicos',this)">
+    <span class="bnav-icon">🎻</span>Músicos
+  </button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- MODAL AYUDA GOOGLE SHEETS -->
+<div class="modal-backdrop" id="help-modal" onclick="closeHelpModal(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>📊 Configurar Google Sheets</h3>
+    <div style="font-size:14px;color:var(--text);line-height:1.7">
+      <div style="background:var(--surface2);border-radius:10px;padding:12px;margin-bottom:14px;border-left:4px solid var(--green)">
+        <b>¿Qué necesitas?</b> Solo una cuenta de Google y 5 minutos. Es completamente gratuito.
+      </div>
+      <b style="color:var(--blue-mid)">Paso 1</b> — Crea el Google Sheet<br>
+      <span style="color:var(--text-muted)">Ve a <b>sheets.google.com</b> → crea una hoja nueva → nómbrala "OSUV Asistencia" → comparte el link con quién quieras que lo vea.</span>
+      <br><br>
+      <b style="color:var(--blue-mid)">Paso 2</b> — Abre el editor de Scripts<br>
+      <span style="color:var(--text-muted)">En el Sheet ve a <b>Extensiones → Apps Script</b>. Borra todo el código que aparece.</span>
+      <br><br>
+      <b style="color:var(--blue-mid)">Paso 3</b> — Pega este código:
+      <div id="apps-script-code" style="background:#0f2548;color:#89cc56;border-radius:8px;padding:12px;margin:8px 0;font-family:monospace;font-size:11px;overflow-x:auto;white-space:pre-wrap;line-height:1.5">function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    data.forEach(function(sheetData) {
+      var sheetName = sheetData.month;
+      var sheet = ss.getSheetByName(sheetName);
+      if (!sheet) sheet = ss.insertSheet(sheetName);
+      sheet.clearContents();
+      var headers = ["Seccion", "Musico"].concat(sheetData.dates);
+      sheet.appendRow(headers);
+      sheetData.rows.forEach(function(row) { sheet.appendRow(row); });
+      var hRange = sheet.getRange(1, 1, 1, headers.length);
+      hRange.setBackground("#0f2548");
+      hRange.setFontColor("#ffffff");
+      hRange.setFontWeight("bold");
+    });
+    return ContentService.createTextOutput(JSON.stringify({ok:true})).setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({ok:false,error:err.message})).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({ok:true,msg:"OSUV Script activo"})).setMimeType(ContentService.MimeType.JSON);
+}</div>
+      <button onclick="copyScript()" style="width:100%;padding:8px;border:2px solid var(--border);border-radius:8px;background:var(--surface2);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:14px">
+        📋 Copiar código
+      </button>
+      <b style="color:var(--blue-mid)">Paso 4</b> — Despliega el script<br>
+      <span style="color:var(--text-muted)">Clic en <b>Implementar → Nueva implementación</b> → Tipo: <b>Aplicación web</b> → "Quién tiene acceso": <b>Cualquier usuario</b> → Clic en <b>Implementar</b>.</span>
+      <br><br>
+      <b style="color:var(--blue-mid)">Paso 5</b> — Copia la URL<br>
+      <span style="color:var(--text-muted)">Copia la URL que aparece (empieza con <b>https://script.google.com/macros/s/...</b>) y pégala en el campo de la app.</span>
+      <br><br>
+      <div style="background:#fef3c7;border-radius:10px;padding:12px;border-left:4px solid #d97706;font-size:13px">
+        ⚠️ <b>Importante:</b> La primera vez que sincronices, Google pedirá que autorices permisos. Acepta con tu cuenta de Google.
+      </div>
+    </div>
+    <button class="btn-primary" onclick="document.getElementById('help-modal').classList.remove('show')" style="width:100%;margin-top:16px;padding:14px">
+      ✅ Entendido
+    </button>
+  </div>
+</div>
+
+<!-- IMPORT FILE INPUT -->
+<input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)" />
+
+<script>
+// ══════════════════════════════════════════════
+//  DATA & PERSISTENCE
+// ══════════════════════════════════════════════
+
+const DEFAULT_MEMBERS = [
+  { id: 1, name: "Thalía Lorenzo",      instrument: "VIOLINES 1" },
+  { id: 2, name: "Sebastián Gallegos",  instrument: "VIOLINES 1" },
+  { id: 3, name: "Christian Cevallos",  instrument: "VIOLINES 1" },
+  { id: 4, name: "Samantha Coloma",     instrument: "VIOLINES 1" },
+  { id: 5, name: "Lois Aulla",          instrument: "VIOLINES 1" },
+  { id: 6, name: "Anaeli Suárez",       instrument: "VIOLINES 1" },
+  { id: 7, name: "David León",          instrument: "VIOLINES 2" },
+  { id: 8, name: "Mauricio Cevallos",   instrument: "VIOLINES 2" },
+  { id: 9, name: "Alexander Gavilanez", instrument: "VIOLINES 2" },
+  { id: 10, name: "Saraí Guachamín",   instrument: "VIOLINES 2" },
+  { id: 11, name: "Alize Cabezas",      instrument: "VIOLINES 2" },
+  { id: 12, name: "Andrea Molina",      instrument: "VIOLAS" },
+  { id: 13, name: "Benjamín Silva",     instrument: "VIOLAS" },
+  { id: 14, name: "Darren Pillajo",     instrument: "CHELOS" },
+  { id: 15, name: "Bárbara González",   instrument: "CHELOS" },
+  { id: 16, name: "Angi Baca",          instrument: "CONTRAS" },
+  { id: 17, name: "Camila Gavilanez",   instrument: "CONTRAS" },
+  { id: 18, name: "Dennis Pillajo",     instrument: "CONTRAS" },
+  { id: 19, name: "Daniela Soriano",    instrument: "FLAUTAS" },
+  { id: 20, name: "Aracely Recalde",    instrument: "FLAUTAS" },
+  { id: 21, name: "Jostyn Villamarín",  instrument: "FLAUTAS" },
+  { id: 22, name: "Ma Daniela Torres",  instrument: "FLAUTAS" },
+  { id: 23, name: "Verónica Guallo",    instrument: "OBOE" },
+  { id: 24, name: "Leonel Herrera",     instrument: "CLARINETE" },
+  { id: 25, name: "Hamilton Moreno",    instrument: "CLARINETE" },
+  { id: 26, name: "Igor Novikov",       instrument: "FAGOT" },
+  { id: 27, name: "Joan Herrera",       instrument: "TROMPETA" },
+  { id: 28, name: "Aaron Narváez",      instrument: "TROMPETA" },
+  { id: 29, name: "Vladimir Lucero",    instrument: "CORNO" },
+  { id: 30, name: "Michael Cevallos",   instrument: "CORNO" },
+  { id: 31, name: "Sebastián Orellana", instrument: "CORNO" },
+  { id: 32, name: "Steven Narváez",     instrument: "TROMBÓN" },
+  { id: 33, name: "Dorian Pillajo",     instrument: "TROMBÓN" },
+  { id: 34, name: "Luis Mario Sánchez", instrument: "PERCUSIÓN" },
+  { id: 35, name: "Diego Miño",         instrument: "PERCUSIÓN" },
+];
+
+function getData() {
+  const raw = localStorage.getItem('osuv_data');
+  if (raw) return JSON.parse(raw);
+  return { members: DEFAULT_MEMBERS, attendance: {}, nextId: 36 };
+}
+function saveData(d) { localStorage.setItem('osuv_data', JSON.stringify(d)); }
+
+// Siempre sincroniza los miembros default al arrancar (corrige instrumentos, etc.)
+function syncDefaultMembers() {
+  const saved = getData();
+  DEFAULT_MEMBERS.forEach(def => {
+    const idx = saved.members.findIndex(m => m.id === def.id);
+    if (idx >= 0) {
+      saved.members[idx].name = def.name;
+      saved.members[idx].instrument = def.instrument;
+    } else {
+      saved.members.push({ ...def });
+    }
+  });
+  saveData(saved);
+  return saved;
+}
+
+let db = syncDefaultMembers();
+
+// Current attendance state (not yet saved)
+let currentDate = '';
+let currentAtt = {}; // memberId -> 'present'|'absent'|'late'|'justified'|null
+
+// ══════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════
+function switchScreen(name, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'historial') renderHistorial();
+  if (name === 'stats') renderStats();
+  if (name === 'musicos') renderMusicosAdmin();
+}
+
+// ══════════════════════════════════════════════
+//  ATTENDANCE SCREEN
+// ══════════════════════════════════════════════
+function initDate() {
+  const d = new Date();
+  const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
+  document.getElementById('ensayo-date').value = `${y}-${m}-${day}`;
+  loadAttendanceView();
+}
+
+function loadAttendanceView() {
+  currentDate = document.getElementById('ensayo-date').value;
+  if (!currentDate) return;
+  // Load existing or blank
+  const saved = db.attendance[currentDate] || {};
+  currentAtt = {};
+  db.members.forEach(m => { currentAtt[m.id] = saved[m.id] || null; });
+  renderAttendanceList();
+}
+
+function renderAttendanceList() {
+  const grouped = {};
+  db.members.forEach(m => {
+    if (!grouped[m.instrument]) grouped[m.instrument] = [];
+    grouped[m.instrument].push(m);
+  });
+
+  let html = '';
+  for (const [instr, members] of Object.entries(grouped)) {
+    const total = members.length;
+    const present = members.filter(m => currentAtt[m.id] === 'present').length;
+    html += `
+      <div class="card">
+        <div class="card-header">
+          <span class="section-label">${instr}</span>
+          <span class="section-count">${present}/${total}</span>
+        </div>
+    `;
+    members.forEach(m => {
+      const st = currentAtt[m.id];
+      const initials = m.name.split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase();
+      html += `
+        <div class="member-item">
+          <div class="member-avatar">${initials}</div>
+          <div class="member-info">
+            <div class="member-name">${m.name}</div>
+            <div class="member-instrument">${m.instrument}</div>
+          </div>
+          <div class="attendance-toggle">
+            <button class="att-btn ${st==='present'?'present':''}" onclick="setAtt(${m.id},'present')" title="Presente">✅</button>
+            <button class="att-btn ${st==='late'?'late':''}" onclick="setAtt(${m.id},'late')" title="Tardanza">⏰</button>
+            <button class="att-btn ${st==='justified'?'justified':''}" onclick="setAtt(${m.id},'justified')" title="Justificado">📝</button>
+            <button class="att-btn ${st==='absent'?'absent':''}" onclick="setAtt(${m.id},'absent')" title="Ausente">❌</button>
+            <button class="att-btn ${st==='notcalled'?'notcalled':''}" onclick="setAtt(${m.id},'notcalled')" title="No convocado">🚫</button>
+          </div>
+        </div>
+      `;
+    });
+    html += '</div>';
+  }
+  document.getElementById('attendance-list').innerHTML = html;
+}
+
+function setAtt(memberId, status) {
+  if (currentAtt[memberId] === status) {
+    currentAtt[memberId] = null; // toggle off
+  } else {
+    currentAtt[memberId] = status;
+  }
+  renderAttendanceList();
+}
+
+function setAllPresent() {
+  db.members.forEach(m => currentAtt[m.id] = 'present');
+  renderAttendanceList();
+}
+function setAllAbsent() {
+  db.members.forEach(m => currentAtt[m.id] = 'absent');
+  renderAttendanceList();
+}
+function clearAll() {
+  db.members.forEach(m => currentAtt[m.id] = null);
+  renderAttendanceList();
+}
+
+function saveAttendance() {
+  if (!currentDate) { showToast('⚠️ Selecciona una fecha'); return; }
+  db = getData();
+  db.attendance[currentDate] = { ...currentAtt };
+  saveData(db);
+  showToast('✅ Asistencia guardada');
+}
+
+// ══════════════════════════════════════════════
+//  HISTORIAL SCREEN
+// ══════════════════════════════════════════════
+function renderHistorial() {
+  db = getData();
+  const dates = Object.keys(db.attendance).sort((a,b) => b.localeCompare(a));
+  
+  // Build month buttons
+  const months = [...new Set(dates.map(d => d.slice(0,7)))];
+  const monthNames = {
+    '01':'Enero','02':'Febrero','03':'Marzo','04':'Abril',
+    '05':'Mayo','06':'Junio','07':'Julio','08':'Agosto',
+    '09':'Septiembre','10':'Octubre','11':'Noviembre','12':'Diciembre'
+  };
+  
+  let activeMonth = months[0] || '';
+  const msEl = document.getElementById('month-selector');
+  msEl.innerHTML = months.map((m,i) => `
+    <button class="month-btn ${i===0?'active':''}" onclick="filterHistorialMonth('${m}',this)">
+      ${monthNames[m.slice(5)]} ${m.slice(0,4)}
+    </button>
+  `).join('');
+
+  renderHistorialList(dates, activeMonth);
+}
+
+function filterHistorialMonth(month, btn) {
+  document.querySelectorAll('.month-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const dates = Object.keys(db.attendance).sort((a,b)=>b.localeCompare(a));
+  renderHistorialList(dates, month);
+}
+
+function renderHistorialList(dates, filterMonth) {
+  db = getData();
+  const filtered = dates.filter(d => !filterMonth || d.startsWith(filterMonth));
+  if (filtered.length === 0) {
+    document.getElementById('historial-list').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <div class="empty-text">No hay ensayos registrados<br>para este mes.</div>
+      </div>`;
+    return;
+  }
+  const total = db.members.length;
+  let html = '<div class="card">';
+  filtered.forEach(d => {
+    const att = db.attendance[d];
+    const present = Object.values(att).filter(v=>v==='present').length;
+    const late = Object.values(att).filter(v=>v==='late').length;
+    const justified = Object.values(att).filter(v=>v==='justified').length;
+    const absent = Object.values(att).filter(v=>v==='absent').length;
+    const notcalled = Object.values(att).filter(v=>v==='notcalled').length;
+    const pct = total ? Math.round((present+late)/total*100) : 0;
+    const [y,m,day] = d.split('-');
+    const mNames = ['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    html += `
+      <div class="history-item" onclick="loadDateFromHistory('${d}')">
+        <div class="history-date">📅 ${parseInt(day)} ${mNames[parseInt(m)]} ${y} &nbsp;<small style="color:var(--text-muted);font-weight:400">${pct}% asistencia</small></div>
+        <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+        <div class="history-stats" style="margin-top:8px">
+          <span class="hs"><span class="hs-dot" style="background:var(--green)"></span>${present} presentes</span>
+          <span class="hs"><span class="hs-dot" style="background:#d97706"></span>${late} tardanza</span>
+          <span class="hs"><span class="hs-dot" style="background:#6366f1"></span>${justified} justif.</span>
+          <span class="hs"><span class="hs-dot" style="background:#e53e3e"></span>${absent} ausentes</span>
+          <span class="hs"><span class="hs-dot" style="background:#6b7280"></span>${notcalled} no conv.</span>
+        </div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  document.getElementById('historial-list').innerHTML = html;
+}
+
+function loadDateFromHistory(date) {
+  document.getElementById('ensayo-date').value = date;
+  loadAttendanceView();
+  // Switch to asistencia tab
+  const btn = document.querySelector('.bnav-btn');
+  switchScreen('asistencia', btn);
+  showToast('📋 Cargado: '+date);
+}
+
+// ══════════════════════════════════════════════
+//  STATS SCREEN
+// ══════════════════════════════════════════════
+function renderStats() {
+  db = getData();
+  const dates = Object.keys(db.attendance);
+  const total = db.members.length;
+  const ensayos = dates.length;
+
+  // Aggregate per member
+  const memberStats = {};
+  db.members.forEach(m => { memberStats[m.id] = { present:0, late:0, absent:0, justified:0, notcalled:0, total:0 }; });
+  dates.forEach(d => {
+    const att = db.attendance[d];
+    db.members.forEach(m => {
+      const v = att[m.id];
+      if (v) {
+        if (v !== 'notcalled') memberStats[m.id].total++; // no cuenta para el % de asistencia
+        memberStats[m.id][v] = (memberStats[m.id][v]||0) + 1;
+      }
+    });
+  });
+
+  // Overall
+  let totPresent=0, totLate=0, totAbsent=0, totJustified=0, totNotCalled=0;
+  Object.values(memberStats).forEach(s => {
+    totPresent += s.present; totLate += s.late; totAbsent += s.absent; totJustified += s.justified; totNotCalled += (s.notcalled||0);
+  });
+  const totalRecords = totPresent+totLate+totAbsent+totJustified;
+  const pct = totalRecords ? Math.round((totPresent+totLate)/totalRecords*100) : 0;
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card stat-present">
+      <div class="stat-number">${totPresent}</div>
+      <div class="stat-label">✅ Presencias</div>
+    </div>
+    <div class="stat-card stat-absent">
+      <div class="stat-number">${totAbsent}</div>
+      <div class="stat-label">❌ Ausencias</div>
+    </div>
+    <div class="stat-card stat-late">
+      <div class="stat-number">${totLate}</div>
+      <div class="stat-label">⏰ Tardanzas</div>
+    </div>
+    <div class="stat-card" style="border-top:3px solid #6b7280">
+      <div class="stat-number" style="color:#6b7280">${totNotCalled}</div>
+      <div class="stat-label">🚫 No convocados</div>
+    </div>
+    <div class="stat-card stat-pct" style="grid-column:1/-1">
+      <div class="stat-number">${pct}%</div>
+      <div class="stat-label">📊 Asistencia general (excluye no convocados)</div>
+    </div>
+  `;
+
+  if (ensayos === 0) {
+    document.getElementById('stats-detail').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📊</div>
+        <div class="empty-text">Registra ensayos para ver estadísticas por músico.</div>
+      </div>`;
+    return;
+  }
+
+  // Per member ranking
+  const ranked = db.members.map(m => {
+    const s = memberStats[m.id];
+    // pct calculado solo sobre ensayos donde fue convocado (excluye notcalled)
+    const convocadoTotal = s.total; // ya excluye notcalled por el tracking
+    const pct = convocadoTotal ? Math.round((s.present+s.late)/convocadoTotal*100) : 0;
+    return { ...m, ...s, pct };
+  }).sort((a,b) => b.pct - a.pct);
+
+  let html = '<div class="card"><div class="card-header"><span class="section-label">Ranking de Asistencia</span></div>';
+  ranked.forEach((m,i) => {
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+    const color = m.pct>=80?'var(--green)':m.pct>=60?'#d97706':'#e53e3e';
+    html += `
+      <div class="member-item">
+        <div class="member-avatar" style="background:${color};font-size:11px">${medal||('#'+(i+1))}</div>
+        <div class="member-info">
+          <div class="member-name">${m.name}</div>
+          <div class="member-instrument">${m.instrument} · ${m.pct}% asistencia${m.notcalled ? ' · 🚫 '+m.notcalled+' no conv.' : ''}</div>
+          <div class="progress-bar-wrap" style="margin-top:5px"><div class="progress-bar-fill" style="width:${m.pct}%;background:${color}"></div></div>
+        </div>
+        <div style="text-align:right;font-size:12px;color:var(--text-muted);flex-shrink:0;padding-left:8px">
+          <div>✅ ${m.present}</div><div>❌ ${m.absent}</div>${m.notcalled?`<div>🚫 ${m.notcalled}</div>`:''}
+        </div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  document.getElementById('stats-detail').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════
+//  MÚSICOS ADMIN SCREEN
+// ══════════════════════════════════════════════
+function renderMusicosAdmin() {
+  db = getData();
+  const q = (document.getElementById('search-musicos')?.value||'').toLowerCase();
+  const grouped = {};
+  db.members.filter(m => m.name.toLowerCase().includes(q) || m.instrument.toLowerCase().includes(q))
+    .forEach(m => {
+      if (!grouped[m.instrument]) grouped[m.instrument] = [];
+      grouped[m.instrument].push(m);
+    });
+
+  let html = '';
+  for (const [instr, members] of Object.entries(grouped)) {
+    html += `<div class="card"><div class="card-header"><span class="section-label">${instr}</span><span class="section-count">${members.length}</span></div>`;
+    members.forEach(m => {
+      const initials = m.name.split(' ').slice(0,2).map(x=>x[0]).join('').toUpperCase();
+      html += `
+        <div class="member-admin-item">
+          <div class="member-avatar" style="width:32px;height:32px;font-size:12px">${initials}</div>
+          <div class="member-info"><div class="member-name" style="font-size:14px">${m.name}</div></div>
+          <button class="btn-sm btn-danger-sm" onclick="removeMusico(${m.id})">Eliminar</button>
+        </div>
+      `;
+    });
+    html += '</div>';
+  }
+  if (!html) html = `<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-text">No se encontraron músicos.</div></div>`;
+  document.getElementById('musicos-list').innerHTML = html;
+}
+
+function addMusico() {
+  const name = document.getElementById('new-name').value.trim();
+  const instrument = document.getElementById('new-instrument').value;
+  if (!name || !instrument) { showToast('⚠️ Completa nombre y sección'); return; }
+  db = getData();
+  db.members.push({ id: db.nextId++, name, instrument });
+  saveData(db);
+  document.getElementById('new-name').value = '';
+  document.getElementById('new-instrument').value = '';
+  renderMusicosAdmin();
+  showToast('🎻 Músico agregado');
+}
+
+function removeMusico(id) {
+  if (!confirm('¿Eliminar este músico?')) return;
+  db = getData();
+  db.members = db.members.filter(m => m.id !== id);
+  saveData(db);
+  renderMusicosAdmin();
+  showToast('🗑️ Músico eliminado');
+}
+
+// ══════════════════════════════════════════════
+//  EXPORT / IMPORT
+// ══════════════════════════════════════════════
+function exportCSV() {
+  db = getData();
+  const dates = Object.keys(db.attendance).sort();
+  if (!dates.length) { showToast('⚠️ No hay ensayos registrados'); return; }
+  
+  const att_labels = { present:'Presente', absent:'Ausente', late:'Tardanza', justified:'Justificado', notcalled:'No convocado', null:'' };
+  let csv = 'Sección,Músico,' + dates.join(',') + '\n';
+  db.members.forEach(m => {
+    const row = [m.instrument, m.name, ...dates.map(d => att_labels[db.attendance[d][m.id]||'null']||'')];
+    csv += row.map(c => `"${c}"`).join(',') + '\n';
+  });
+  
+  const blob = new Blob(['\uFEFF'+csv], { type: 'text/csv;charset=utf-8' });
+  downloadBlob(blob, `OSUV_Asistencia_${new Date().toISOString().slice(0,10)}.csv`);
+  showToast('📊 CSV exportado');
+}
+
+function exportJSON() {
+  db = getData();
+  const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+  downloadBlob(blob, `OSUV_Backup_${new Date().toISOString().slice(0,10)}.json`);
+  showToast('📤 Backup exportado');
+}
+
+function importJSON() {
+  document.getElementById('import-file').click();
+}
+
+function handleImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.members || !data.attendance) throw new Error('Formato inválido');
+      saveData(data);
+      db = data;
+      showToast('✅ Backup importado');
+      renderMusicosAdmin();
+    } catch {
+      showToast('❌ Archivo inválido');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function downloadBlob(blob, filename) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// ══════════════════════════════════════════════
+//  GOOGLE SHEETS SYNC
+// ══════════════════════════════════════════════
+function saveSheetUrl() {
+  const url = document.getElementById('sheets-url').value.trim();
+  localStorage.setItem('osuv_sheets_url', url);
+  const badge = document.getElementById('sheets-status-badge');
+  if (url) {
+    badge.textContent = 'URL guardada ✓';
+    badge.style.background = '#d1fae5';
+    badge.style.color = '#065f46';
+  } else {
+    badge.textContent = 'No configurado';
+    badge.style.background = '#f0fdf4';
+    badge.style.color = '#16a34a';
+  }
+}
+
+function loadSheetUrl() {
+  const url = localStorage.getItem('osuv_sheets_url') || '';
+  const el = document.getElementById('sheets-url');
+  if (el) {
+    el.value = url;
+    if (url) {
+      const badge = document.getElementById('sheets-status-badge');
+      if (badge) { badge.textContent = 'URL guardada ✓'; badge.style.background = '#d1fae5'; badge.style.color = '#065f46'; }
+    }
+  }
+}
+
+async function syncSheets() {
+  const url = localStorage.getItem('osuv_sheets_url') || '';
+  if (!url) { showToast('Primero pega la URL del Apps Script'); document.getElementById('sheets-url').focus(); return; }
+  db = getData();
+  const dates = Object.keys(db.attendance).sort();
+  if (!dates.length) { showToast('No hay ensayos que sincronizar'); return; }
+  const log = document.getElementById('sync-log');
+  log.style.display = 'block';
+  log.innerHTML = 'Sincronizando...';
+  showToast('Sincronizando...');
+  const att_labels = { present: 'Presente', absent: 'Ausente', late: 'Tardanza', justified: 'Justificado', notcalled: 'No convocado' };
+  const byMonth = {};
+  dates.forEach(d => { const mk = d.slice(0,7); if (!byMonth[mk]) byMonth[mk]=[]; byMonth[mk].push(d); });
+  const monthNames = {'01':'Enero','02':'Febrero','03':'Marzo','04':'Abril','05':'Mayo','06':'Junio','07':'Julio','08':'Agosto','09':'Septiembre','10':'Octubre','11':'Noviembre','12':'Diciembre'};
+  const payload = Object.entries(byMonth).map(([mk, mDates]) => {
+    const [y,m] = mk.split('-');
+    const sheetName = monthNames[m] + ' ' + y;
+    const rows = db.members.map(mem => [mem.instrument, mem.name, ...mDates.map(d => { const v = db.attendance[d] && db.attendance[d][mem.id]; return v ? (att_labels[v]||'') : ''; })]);
+    const formattedDates = mDates.map(d => d.slice(8)+'/'+d.slice(5,7));
+    return { month: sheetName, dates: formattedDates, rows };
+  });
+  try {
+    const resp = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) });
+    const result = await resp.json();
+    if (result.ok) {
+      log.innerHTML = 'Sincronizado correctamente - ' + new Date().toLocaleTimeString('es-EC');
+      showToast('Google Sheets actualizado!');
+      const badge = document.getElementById('sheets-status-badge');
+      if (badge) { badge.textContent = 'Sincronizado'; badge.style.background = '#d1fae5'; badge.style.color = '#065f46'; }
+    } else { throw new Error(result.error || 'Error desconocido'); }
+  } catch(err) {
+    log.innerHTML = 'Error: ' + err.message;
+    showToast('Error al sincronizar');
+  }
+}
+
+function showSheetHelp() { document.getElementById('help-modal').classList.add('show'); }
+function closeHelpModal(e) { if (e.target === document.getElementById('help-modal')) document.getElementById('help-modal').classList.remove('show'); }
+function copyScript() {
+  const code = document.getElementById('apps-script-code').innerText;
+  navigator.clipboard.writeText(code).then(() => showToast('Codigo copiado')).catch(() => showToast('Copia el codigo manualmente'));
+}
+
+// ══════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════
+let toastTimeout;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+initDate();
+loadSheetUrl();
+
+// Register Service Worker for offline/PWA support
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(console.warn);
+}
+</script>
+</body>
+</html>
