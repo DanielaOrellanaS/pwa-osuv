@@ -1042,8 +1042,7 @@ async function saveAttendance() {
     }
   });
 
-  const fechasEnviando = Object.keys(allAttendance).length;
-  showToast('💾 Enviando ' + fechasEnviando + ' ensayo(s)...');
+  showToast('💾 Guardando y sincronizando...');
 
   try {
     const resp = await fetch(url, {
@@ -1058,13 +1057,12 @@ async function saveAttendance() {
     });
     const result = await resp.json();
     if (result.ok) {
-      const recibidas = (result.datesReceived || []).length;
-      showToast('✅ Guardado · ' + recibidas + ' fecha(s) en Sheets');
+      showToast('✅ Guardado y sincronizado con Sheets');
     } else {
-      showToast('✅ Guardado · ⚠️ ' + (result.error || 'Error Sheets'));
+      showToast('✅ Guardado · ⚠️ Error en Sheets');
     }
   } catch (err) {
-    showToast('✅ Guardado localmente · Sin internet');
+    showToast('✅ Guardado · Sin conexión a Sheets');
   }
 }
 
