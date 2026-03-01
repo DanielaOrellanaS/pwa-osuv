@@ -1027,18 +1027,39 @@ async function saveAttendance() {
 
   showToast('💾 Guardando y sincronizando...');
 
-  // Armar payload por músico con su estado
+  // Miembros con estado del día actual
   const members = db.members.map(m => ({
+    id: m.id,
     instrument: m.instrument,
     name: m.name,
     status: currentAtt[m.id] || ''
   }));
 
+  // Todas las asistencias del mes para reconstruir la hoja completa
+  const currentMonth = currentDate.slice(0, 7);
+  const allAttendance = {};
+  Object.keys(db.attendance).forEach(d => {
+    if (d.slice(0, 7) === currentMonth) {
+      allAttendance[d] = db.attendance[d];
+    }
+  });
+
+  // Debug: verificar qué fechas se están enviando
+  console.log('Fechas en allAttendance:', Object.keys(allAttendance));
+  console.log('Fecha actual:', currentDate);
+  console.log('Mes actual:', currentMonth);
+  console.log('Todas las fechas en db:', Object.keys(db.attendance));
+
   try {
     const resp = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ type: 'sync_day', date: currentDate, members })
+      body: JSON.stringify({
+        type: 'sync_day',
+        date: currentDate,
+        members,
+        allAttendance
+      })
     });
     const result = await resp.json();
     if (result.ok) {
