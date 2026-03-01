@@ -669,9 +669,12 @@
 
     <div id="attendance-list"></div>
 
-    <button class="export-btn" onclick="saveAttendance()">
+    <button class="export-btn" onclick="saveAttendance()" id="save-btn">
       💾 Guardar Asistencia
     </button>
+    <div id="sheets-hint" style="display:none;text-align:center;font-size:12px;color:var(--text-muted);margin-top:8px">
+      📊 También se sincronizará con Google Sheets
+    </div>
 
   </div>
 
@@ -741,12 +744,12 @@
             oninput="saveSheetUrl()"
             style="width:100%;margin-bottom:10px;font-size:13px" />
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn-primary btn-green" onclick="syncSheets()" style="flex:1;min-width:130px">
-              🔄 Sincronizar ahora
-            </button>
             <button class="btn-primary" onclick="showSheetHelp()" style="flex:1;min-width:130px;background:linear-gradient(135deg,#6366f1,#4338ca)">
               ❓ Cómo configurar
             </button>
+          </div>
+          <div style="margin-top:10px;font-size:12px;color:var(--text-muted);line-height:1.5">
+            ✅ Una vez configurado, la sincronización ocurre automáticamente al guardar cada ensayo.
           </div>
           <div id="sync-log" style="margin-top:10px;font-size:12px;color:var(--text-muted);display:none"></div>
         </div>
@@ -1010,12 +1013,42 @@ function clearAll() {
   renderAttendanceList();
 }
 
-function saveAttendance() {
+async function saveAttendance() {
   if (!currentDate) { showToast('⚠️ Selecciona una fecha'); return; }
   db = getData();
   db.attendance[currentDate] = { ...currentAtt };
   saveData(db);
-  showToast('✅ Asistencia guardada');
+
+  const url = localStorage.getItem('osuv_sheets_url') || '';
+  if (!url) {
+    showToast('✅ Asistencia guardada');
+    return;
+  }
+
+  showToast('💾 Guardando y sincronizando...');
+
+  // Armar payload por músico con su estado
+  const members = db.members.map(m => ({
+    instrument: m.instrument,
+    name: m.name,
+    status: currentAtt[m.id] || ''
+  }));
+
+  try {
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ type: 'sync_day', date: currentDate, members })
+    });
+    const result = await resp.json();
+    if (result.ok) {
+      showToast('✅ Guardado y sincronizado con Sheets');
+    } else {
+      showToast('✅ Guardado · ⚠️ Error en Sheets');
+    }
+  } catch (err) {
+    showToast('✅ Guardado · Sin conexión a Sheets');
+  }
 }
 
 // ══════════════════════════════════════════════
@@ -1379,6 +1412,9 @@ function saveSheetUrl() {
     badge.style.background = '#f0fdf4';
     badge.style.color = '#16a34a';
   }
+  // Actualizar hint en asistencia
+  const hint = document.getElementById('sheets-hint');
+  if (hint) hint.style.display = url ? 'block' : 'none';
 }
 
 function loadSheetUrl() {
@@ -1391,6 +1427,9 @@ function loadSheetUrl() {
       if (badge) { badge.textContent = 'URL guardada ✓'; badge.style.background = '#d1fae5'; badge.style.color = '#065f46'; }
     }
   }
+  // Mostrar hint en pantalla de asistencia si hay URL configurada
+  const hint = document.getElementById('sheets-hint');
+  if (hint) hint.style.display = url ? 'block' : 'none';
 }
 
 async function syncSheets() {
