@@ -1025,8 +1025,6 @@ async function saveAttendance() {
     return;
   }
 
-  showToast('📤 Enviando ' + Object.keys(allAttendance).length + ' fechas...');
-
   // Miembros con estado del día actual
   const members = db.members.map(m => ({
     id: m.id,
@@ -1035,7 +1033,7 @@ async function saveAttendance() {
     status: currentAtt[m.id] || ''
   }));
 
-  // Todas las asistencias del mes para reconstruir la hoja completa
+  // Todas las asistencias del mes
   const currentMonth = currentDate.slice(0, 7);
   const allAttendance = {};
   Object.keys(db.attendance).forEach(d => {
@@ -1044,11 +1042,8 @@ async function saveAttendance() {
     }
   });
 
-  // Debug: verificar qué fechas se están enviando
-  console.log('Fechas en allAttendance:', Object.keys(allAttendance));
-  console.log('Fecha actual:', currentDate);
-  console.log('Mes actual:', currentMonth);
-  console.log('Todas las fechas en db:', Object.keys(db.attendance));
+  const fechasEnviando = Object.keys(allAttendance).length;
+  showToast('💾 Enviando ' + fechasEnviando + ' ensayo(s)...');
 
   try {
     const resp = await fetch(url, {
@@ -1063,12 +1058,13 @@ async function saveAttendance() {
     });
     const result = await resp.json();
     if (result.ok) {
-      showToast('✅ Sheets: ' + (result.datesReceived || []).join(', '));
+      const recibidas = (result.datesReceived || []).length;
+      showToast('✅ Guardado · ' + recibidas + ' fecha(s) en Sheets');
     } else {
-      showToast('✅ Guardado · ⚠️ Error en Sheets');
+      showToast('✅ Guardado · ⚠️ ' + (result.error || 'Error Sheets'));
     }
   } catch (err) {
-    showToast('✅ Guardado · Sin conexión a Sheets');
+    showToast('✅ Guardado localmente · Sin internet');
   }
 }
 
