@@ -1025,7 +1025,7 @@ async function saveAttendance() {
     return;
   }
 
-  showToast('💾 Guardando y sincronizando...');
+  showToast('📤 Enviando ' + Object.keys(allAttendance).length + ' fechas...');
 
   // Miembros con estado del día actual
   const members = db.members.map(m => ({
@@ -1063,7 +1063,7 @@ async function saveAttendance() {
     });
     const result = await resp.json();
     if (result.ok) {
-      showToast('✅ Guardado y sincronizado con Sheets');
+      showToast('✅ Sheets: ' + (result.datesReceived || []).join(', '));
     } else {
       showToast('✅ Guardado · ⚠️ Error en Sheets');
     }
