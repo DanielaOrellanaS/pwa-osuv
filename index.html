@@ -894,9 +894,13 @@ function getData() {
 function saveData(d) { localStorage.setItem('osuv_data', JSON.stringify(d)); }
 
 // Siempre sincroniza los miembros default al arrancar (corrige instrumentos, etc.)
+// IMPORTANTE: si un músico default fue eliminado manualmente, se respeta esa eliminación
+// y NO se vuelve a agregar (se guarda su id en removedDefaultIds).
 function syncDefaultMembers() {
   const saved = getData();
+  if (!Array.isArray(saved.removedDefaultIds)) saved.removedDefaultIds = [];
   DEFAULT_MEMBERS.forEach(def => {
+    if (saved.removedDefaultIds.includes(def.id)) return; // fue eliminado a propósito, no resucitar
     const idx = saved.members.findIndex(m => m.id === def.id);
     if (idx >= 0) {
       saved.members[idx].name = def.name;
@@ -923,6 +927,7 @@ function switchScreen(name, btn) {
   document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('screen-'+name).classList.add('active');
   btn.classList.add('active');
+  if (name === 'asistencia') loadAttendanceView();
   if (name === 'historial') renderHistorial();
   if (name === 'stats') renderStats();
   if (name === 'musicos') renderMusicosAdmin();
@@ -1376,6 +1381,10 @@ function removeMusico(id) {
   if (!confirm('¿Eliminar este músico?')) return;
   db = getData();
   db.members = db.members.filter(m => m.id !== id);
+  if (!Array.isArray(db.removedDefaultIds)) db.removedDefaultIds = [];
+  if (DEFAULT_MEMBERS.some(d => d.id === id) && !db.removedDefaultIds.includes(id)) {
+    db.removedDefaultIds.push(id); // recuerda que este músico original fue eliminado a propósito
+  }
   saveData(db);
   renderMusicosAdmin();
   showToast('🗑️ Músico eliminado');

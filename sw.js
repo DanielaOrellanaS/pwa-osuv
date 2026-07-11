@@ -1,6 +1,6 @@
 // OSUV Service Worker v2
 // ⚠️ Cambia este número cada vez que subas una actualización: v3, v4, v5...
-const CACHE_NAME = 'osuv-v2';
+const CACHE_NAME = 'osuv-v3';
 
 const ASSETS = [
   './',
